@@ -7,42 +7,100 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f9;
-            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f3f3f3;
         }
-        #countdown {
-            font-size: 2rem;
-            margin-top: 20%;
+        .countdown {
+            display: flex;
+            gap: 15px;
+        }
+        .time-box {
+            background: #fff;
+            color: #000;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            width: 100px;
+            position: relative;
+            font-weight: bold;
+            overflow: hidden;
+        }
+        .time-box span {
+            display: block;
+            font-size: 2.5rem;
+            line-height: 1.2;
+        }
+        .label {
+            background: #222;
+            color: #fff;
+            padding: 5px;
+            font-size: 0.8rem;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            text-transform: uppercase;
         }
     </style>
 </head>
 <body>
-    <h1>Countdown to April 17, 2025</h1>
-    <div id="countdown"></div>
+    <div class="countdown">
+        <div class="time-box">
+            <span id="months">00</span>
+            <div class="label">Months</div>
+        </div>
+        <div class="time-box">
+            <span id="weeks">00</span>
+            <div class="label">Weeks</div>
+        </div>
+        <div class="time-box">
+            <span id="days">00</span>
+            <div class="label">Days</div>
+        </div>
+        <div class="time-box">
+            <span id="hours">00</span>
+            <div class="label">Hours</div>
+        </div>
+    </div>
 
     <script>
-        function updateCountdown() {
+        function startCountdown() {
             const targetDate = new Date("April 17, 2025 00:00:00").getTime();
-            const now = new Date().getTime();
-            const distance = targetDate - now;
+            const monthsEl = document.getElementById("months");
+            const weeksEl = document.getElementById("weeks");
+            const daysEl = document.getElementById("days");
+            const hoursEl = document.getElementById("hours");
 
-            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            function updateCountdown() {
+                const now = new Date().getTime();
+                const distance = targetDate - now;
 
-            document.getElementById("countdown").innerHTML = 
-                `${days} Days ${hours} Hours ${minutes} Minutes ${seconds} Seconds`;
+                const totalDays = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const months = Math.floor(totalDays / 30); // Aproximação de 30 dias por mês
+                const weeks = Math.floor((totalDays % 30) / 7);
+                const days = (totalDays % 30) % 7;
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
 
-            if (distance < 0) {
-                clearInterval(countdownInterval);
-                document.getElementById("countdown").innerHTML = "The day has arrived!";
+                monthsEl.textContent = months < 10 ? `0${months}` : months;
+                weeksEl.textContent = weeks < 10 ? `0${weeks}` : weeks;
+                daysEl.textContent = days < 10 ? `0${days}` : days;
+                hoursEl.textContent = hours < 10 ? `0${hours}` : hours;
+
+                if (distance < 0) {
+                    clearInterval(timer);
+                    document.querySelector(".countdown").innerHTML = "<h2>Countdown Expired!</h2>";
+                }
             }
+
+            const timer = setInterval(updateCountdown, 1000);
+            updateCountdown();
         }
 
-        const countdownInterval = setInterval(updateCountdown, 1000);
-        updateCountdown();
+        startCountdown();
     </script>
 </body>
 </html>
